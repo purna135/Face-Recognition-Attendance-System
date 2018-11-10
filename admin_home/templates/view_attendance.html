@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendace Result</title>
+</head>
+
+<style>
+.myTable {
+  margin-left: 15%;
+  width: 70%;
+  text-align: left;
+  background-color: lemonchiffon;
+  border-collapse: collapse;
+  }
+.myTable th {
+    text-align: center;
+  background-color: goldenrod;
+  color: white;
+  }
+.myTable td,
+.myTable th {
+  padding: 10px;
+  border: 1px solid goldenrod;
+  }
+</style>
+
+<body>
+
+    <table class="myTable">
+        <tr>
+            <th>Reg No</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Branch</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+        {% for regnos, fname, lname, branch, email, status in data %}
+            <tr>
+                <td>{{ regnos }}</td>
+                <td>{{ fname }}</td>
+                <td>{{ lname }}</td>
+                <td>{{ branch }}</td>
+                <td>{{ email }}</td>
+                <td>{{ status }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

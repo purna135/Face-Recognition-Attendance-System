@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Signup Page</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/signup_style.css' %}">
+</head>
+<body>
+    <form  method="post">
+    {% csrf_token %}
+        <div class="container">
+        <div class="jumbotron">
+        <h2>Sign Up</h2>
+        <p>Please fill in this form to create an account.</p>
+        <hr>
+        {{ form.management_form }}
+            {% for field in form %}
+                <label>{{ field.label_tag }}</label>
+                {{ field }}
+            {% endfor %}
+
+    <label>
+      <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> I Agree
+    </label>
+
+        {% if messages %}
+            {% for message in messages %}
+                <center><p style="color: red">{{ message }}</p></center>
+            {% endfor %}
+        {% endif %}
+
+    <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+        <div class="clearfix">
+            <button type="reset" class="btn btn-blue bt">Cancel</button>
+            <button type="submit" class="btn btn-primary bt">Sign Up</button>
+        </div>
+    </div>
+  </div>
+</form>
+
+</body>
+</html>
