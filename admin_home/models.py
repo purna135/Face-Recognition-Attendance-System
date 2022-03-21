@@ -15,4 +15,4 @@ class Student_Info ( models . Model ):
     Parents_Email = models . EmailField ( max_length= 50 )
 
     def __str__(self):
-        return str ( self . First_Name + ' ' +self.Last_Name )
+        return str(f'{self.First_Name} {self.Last_Name}')

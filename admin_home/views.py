@@ -25,9 +25,8 @@ def signinview(request):
             return render(request, 'welcome.html')
         else:
             messages.error(request, "Invalid Username or Password")
-    else:
-        if 'user' in request.session:
-            return render(request, 'welcome.html')
+    elif 'user' in request.session:
+        return render(request, 'welcome.html')
     return render(request, 'signin.html')
 
 
@@ -61,24 +60,23 @@ def registerview(request):
 def saveimageview(request):
     if request.method != 'POST':
         return redirect('http://127.0.0.1:8000/')
+    dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
+    image_data = request.POST['imagedata']
+    image_data = dataUrlPattern.match(image_data).group(2)
+    image_data = image_data.encode()
+    image_data = base64.b64decode(image_data)
+
+    with open(f"images/train/{request.session['regno']}.jpg", 'wb') as f:
+        f.write(image_data)
+
+    if face_validation(f"images/train/{request.session['regno']}.jpg"):
+        request.session['regno'] = None
+        return render(request, 'index.html', {'mess':'success'})
     else:
-        dataUrlPattern = re.compile('data:image/(png|jpeg);base64,(.*)$')
-        image_data = request.POST['imagedata']
-        image_data = dataUrlPattern.match(image_data).group(2)
-        image_data = image_data.encode()
-        image_data = base64.b64decode(image_data)
-
-        with open(r'images/train/{}.jpg'.format(request.session['regno']), 'wb') as f:
-            f.write(image_data)
-
-        if face_validation(r'images/train/{}.jpg'.format(request.session['regno'])):
-            request.session['regno'] = None
-            return render(request, 'index.html', {'mess':'success'})
-        else:
-            system(r'del images\train\{}.jpg'.format(request.session['regno']))
-            messages.error(request, "We cann't not recognise your face")
-            messages.error(request, "Please take a another pic having your face only...")
-            return render(request, 'take_image.html')
+        system(f"del images\\train\\{request.session['regno']}.jpg")
+        messages.error(request, "We cann't not recognise your face")
+        messages.error(request, "Please take a another pic having your face only...")
+        return render(request, 'take_image.html')
 
 
 def face_validation(image):
@@ -126,8 +124,8 @@ def detect_face():
 
     data = Student_Info.objects.values('First_Name', 'Last_Name', 'Registration_No', 'Branch', 'Email')
     for student in data:
-        if os.path.exists('images/train/{}.jpg'.format(student['Registration_No'])):
-            img = 'images/train/{}.jpg'.format(student['Registration_No'])
+        if os.path.exists(f"images/train/{student['Registration_No']}.jpg"):
+            img = f"images/train/{student['Registration_No']}.jpg"
             image = face_recognition.load_image_file(img)
             known_face_encodings.append(face_recognition.face_encodings(image)[0])
             known_face_names.append(student['First_Name'])
@@ -230,7 +228,8 @@ def send_Email(df):
         Yours sincerely,
         Admin, GCEK Bhawanipatna
     '''
-    admin_message = 'Total number of students present today is {} out of {} students.'.format(present, total_student)
+    admin_message = f'Total number of students present today is {present} out of {total_student} students.'
+
 
     send_mail(mail_subject, message, from_mail, to_mail, fail_silently=False,)
     send_mail(mail_subject, admin_message, from_mail, admin_mail, fail_silently=False)
